@@ -13,7 +13,7 @@ app.use(express.json())
 
 
 app.use('/api/v1/tours', tourRouter)
-app.use('/api/vi.users', userRouter)
+app.use('/api/vi/users', userRouter)
 
 
 const port = 3000
