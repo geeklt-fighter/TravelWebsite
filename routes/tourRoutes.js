@@ -1,10 +1,10 @@
 const express = require('express')
 
 const router = express.Router()
-const { getAllTours, createTour, getTour, updateTour, deleteTour, checkID, checkBody }
+const { getAllTours, createTour, getTour, updateTour, deleteTour}
     = require('../controllers/tourController')
 
-router.param('id', checkID)
+
 
 // Create a checkBody middleware
 // Check if body contains the name and price property
@@ -15,12 +15,11 @@ router.param('id', checkID)
 router
     .route('/')
     .get(getAllTours)
-    .post(checkBody, createTour)
+    .post(createTour)
 router
     .route('/:id')
     .get(getTour)
     .patch(updateTour)
     .delete(deleteTour)
-
 
 module.exports = router
