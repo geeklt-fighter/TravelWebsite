@@ -1,7 +1,7 @@
 const express = require('express')
 
 const router = express.Router()
-const { getAllTours, createTour, getTour, updateTour, deleteTour}
+const { getAllTours, createTour, getTour, updateTour, deleteTour, aliasTopTours}
     = require('../controllers/tourController')
 
 
@@ -12,6 +12,8 @@ const { getAllTours, createTour, getTour, updateTour, deleteTour}
 // Add it to the post handler stack
 
 // This way is better
+
+router.route('/top-5-cheap').get(aliasTopTours, getAllTours)
 router
     .route('/')
     .get(getAllTours)
