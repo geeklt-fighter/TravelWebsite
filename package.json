@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start:dev": "nodemon server",
-    "start:prod": "NODE_ENV=production nodemon server"
+    "start:prod": "NODE_ENV=production nodemon server",
+    "debug": "ndb server.js"
   },
   "author": "timlo",
   "license": "ISC",
@@ -26,6 +27,7 @@
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.17.0",
+    "ndb": "^1.1.5",
     "prettier": "^1.19.1"
   }
 }
