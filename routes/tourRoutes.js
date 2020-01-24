@@ -3,7 +3,8 @@ const express = require('express')
 const router = express.Router()
 const { getAllTours, createTour, getTour, updateTour, deleteTour, aliasTopTours, getTourStats, getMonthlyPlan }
     = require('../controllers/tourController')
-
+const { protect, restrictTo } = require('../controllers/authController')
+const authController = require('../controllers/authController')
 
 
 // Create a checkBody middleware
@@ -27,13 +28,16 @@ router
 
 router
     .route('/')
-    .get(getAllTours)
+    .get(protect, getAllTours)
     .post(createTour)
 
 router
     .route('/:id')
     .get(getTour)
     .patch(updateTour)
-    .delete(deleteTour)
+    .delete(
+        protect,
+        authController.restrictTo('admin', 'lead-guide'),
+        deleteTour)
 
 module.exports = router
