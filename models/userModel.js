@@ -1,3 +1,4 @@
+const crypto = require('crypto')
 const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
@@ -16,10 +17,10 @@ const userSchema = new mongoose.Schema({
         validate: [validator.isEmail, 'Please provide a valid email']
     },
     photo: String,
-    role:{
-        type:String,
-        enum: ['user','guide','lead_guide','admin'],
-        default:'user'
+    role: {
+        type: String,
+        enum: ['user', 'guide', 'lead_guide', 'admin'],
+        default: 'user'
     },
     password: {
         type: String,
@@ -37,7 +38,9 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
-    passwordChangedAt: Date
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date
 })
 
 // between getting the data and saving it to the database
@@ -55,6 +58,15 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
+userSchema.pre('save', function (next) {
+    if (!this.isModified('password') || this.isNew) {
+        return next()
+    }
+
+    this.passwordChangedAt = Date.now()
+    next()
+})
+
 userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
     // this.password is not available because of select:false
     return await bcrypt.compare(candidatePassword, userPassword)
@@ -63,12 +75,21 @@ userSchema.methods.correctPassword = async function (candidatePassword, userPass
 userSchema.methods.changesPasswordAfter = function (JWTTimestamp) { // Note: There is no need a fucking async, becuase the protect cannot receive the return value
     if (this.passwordChangedAt) { // this keyword point to the current document
         const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10)
-        console.log('bitch')
         console.log(changedTimestamp, JWTTimestamp)
         return changedTimestamp > JWTTimestamp
     }
 
     return false    // meaning user has not changed the password
+}
+
+userSchema.methods.createPasswordResetToken = function () {
+    const resetToken = crypto.randomBytes(32).toString('hex')
+
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex')
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000
+    console.log({ resetToken }, this.passwordResetToken)
+
+    return resetToken
 }
 
 const User = mongoose.model('User', userSchema)
