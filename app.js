@@ -1,6 +1,11 @@
 const express = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const rateLimit = require('express-rate-limit')
+const helmet = require('helmet')
+const mongoSanitize = require('express-mongo-sanitize')
+const xss = require('xss-clean')
+const hpp = require('hpp')
 
 dotenv.config({ path: './config.env' });
 
@@ -12,17 +17,51 @@ const userRouter = require('./routes/userRoutes');
 const app = express();
 
 
+/* Middleware is a function that can modify the incoming request data */
+// 1) Global Middlewares
 
-// console.log(process.env.NODE_ENV)
-// 1) Middlewares
+// Security HTTP headers
+app.use(helmet())
+
+// Development Logging
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
-// Middleware is a function that can modify the incomeing request data
-app.use(express.json());
+// Limit request from same API
+const limiter = rateLimit({
+    max: 100,
+    windowMs: 60 * 60 * 1000,   // Limit 100 request in an hour
+    message: 'Too many requests from this IP, please try again in an hour'
+})
+
+app.use('/api', limiter)
+
+// Body parser, reading data from body into req.body
+app.use(express.json({ limit: '10kb' }));
+
+// Data sanitization against NoSQL query injection
+app.use(mongoSanitize())
+
+// Data sanitization against XSS script
+app.use(xss())
+
+// Prevent Paramater pollution
+app.use(hpp({
+    whitelist: [    // let the duplicate paramater work
+        'duration',  
+        'ratingsQuantity',
+        'ratingsAverage',
+        'maxGroupSize',
+        'difficulty',
+        'price'
+    ]
+}))
+
+// Serving static files
 app.use(express.static(`${__dirname}/public`));
 
+// This is just test middleware
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString()
     // console.log(req.headers)

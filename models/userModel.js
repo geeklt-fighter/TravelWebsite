@@ -40,7 +40,12 @@ const userSchema = new mongoose.Schema({
     },
     passwordChangedAt: Date,
     passwordResetToken: String,
-    passwordResetExpires: Date
+    passwordResetExpires: Date,
+    active: {
+        type: Boolean,
+        default: true,
+        select: false   // We do not want to leak the active field to the user
+    }
 })
 
 // between getting the data and saving it to the database
@@ -64,6 +69,13 @@ userSchema.pre('save', function (next) {
     }
 
     this.passwordChangedAt = Date.now()
+    next()
+})
+
+// Query middleware
+userSchema.pre(/^find/, function (next) {    // "/^find/": not just find, also find and update, find and delete, and so on 
+    // this point to the current query  [ userController >> getAllUsers >> User.find() ]
+    this.find({ active: { $ne: false } })   // we don't use {active: true} because other documents has no active field 
     next()
 })
 
