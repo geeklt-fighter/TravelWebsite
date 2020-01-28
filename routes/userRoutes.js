@@ -2,7 +2,8 @@ const express = require('express')
 
 const router = express.Router()
 const { getAllUsers, createUser, getUser, updateUser, deleteUser, updateMe, deleteMe } = require('../controllers/userController')
-const { signup, login, forgotPassword, resetPassword, protect, updatePassword } = require('../controllers/authController')
+const { signup, login, forgotPassword, resetPassword, protect, updatePassword, restrictTo } = require('../controllers/authController')
+
 
 
 // Not actually the REST format

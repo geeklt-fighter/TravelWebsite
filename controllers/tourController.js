@@ -36,7 +36,12 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 })
 
 exports.getTour = catchAsync(async (req, res, next) => {
-    const tour = await Tour.findById(req.params.id)
+    const tour = await Tour.findById(req.params.id).populate('reviews')
+        // move it to the query middleware
+        // .populate({
+        //     path: 'guides',
+        //     select: '-__v'
+        // })  // Populate meaning replace the guides id with actual data
 
     if (!tour) {
         return next(new AppError('No tour found with that ID', 404)) // we use return because we don't want to move on the next one

@@ -5,6 +5,17 @@ const { getAllTours, createTour, getTour, updateTour, deleteTour, aliasTopTours,
     = require('../controllers/tourController')
 const { protect, restrictTo } = require('../controllers/authController')
 const authController = require('../controllers/authController')
+const reviewRouter = require('../routes/reviewRoutes')
+// const { createReview } = require('../controllers/reviewController')
+
+// POST /tour/234fad4/reviews   ->  Nested Route
+// GET /tour/234fad4/reviews   ->  Nested Route
+
+// Because below handler is similarly same as reviewRoute
+// router.route('/:tourId/reviews')
+//     .post(protect, restrictTo('user'), createReview)
+// Therefore, we need to change like this, mounting reviewRoute
+router.use('/:tourId/reviews', reviewRouter)
 
 
 // Create a checkBody middleware
@@ -39,5 +50,6 @@ router
         protect,
         authController.restrictTo('admin', 'lead-guide'),
         deleteTour)
+
 
 module.exports = router
