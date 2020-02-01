@@ -1,7 +1,7 @@
 const express = require('express')
 
 const router = express.Router()
-const { getAllUsers, createUser, getUser, updateUser, deleteUser, updateMe, deleteMe } = require('../controllers/userController')
+const { getAllUsers, createUser, getUser, updateUser, deleteUser, updateMe, deleteMe, getMe } = require('../controllers/userController')
 const { signup, login, forgotPassword, resetPassword, protect, updatePassword, restrictTo } = require('../controllers/authController')
 
 
@@ -9,13 +9,23 @@ const { signup, login, forgotPassword, resetPassword, protect, updatePassword, r
 // Not actually the REST format
 router.post('/signup', signup)
 router.post('/login', login)
+
 router.post('/forgotPassword', forgotPassword)
 router.patch('/resetPassword/:token', resetPassword)
-router.patch('/updateMyPassword', protect, updatePassword)
-router.patch('/updateMe', protect, updateMe)
-router.patch('/deleteMe', protect, deleteMe)
 
-// More REST format
+// This will basically protect all the routes come after this middleware
+// becuase middleware runs in sequence
+router.use(protect)
+
+// so we remove protect middleware from the 21 
+router.patch('/updateMyPassword', updatePassword)
+router.patch('/updateMe', updateMe)
+router.patch('/deleteMe', deleteMe)
+router.get('/me', getMe, getUser)
+
+
+router.use(restrictTo('admin'))
+
 router
     .route('/')
     .get(getAllUsers)
