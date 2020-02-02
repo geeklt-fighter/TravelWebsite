@@ -1,6 +1,6 @@
 // review / rating / createdAt / ref to tour / ref to user
 const mongoose = require('mongoose')
-
+const Tour = require('../models/tourModel')
 
 const ReviewSchema = new mongoose.Schema({
     review: {
@@ -31,8 +31,10 @@ const ReviewSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 })
 
+ReviewSchema.index({ tour: 1, user: 1 }, { unique: true })
 
-ReviewSchema.pre(/^find/,function (next) {
+
+ReviewSchema.pre(/^find/, function (next) {
     // The movie's solution
     // this.populate({
     //     path:'tour',
@@ -52,6 +54,55 @@ ReviewSchema.pre(/^find/,function (next) {
     //     select:'-__v'
     // })
     next()
+})
+
+ReviewSchema.statics.calcAverageRatings = async function (tourId) {
+    // console.log('tourId:', tourId)
+    const stats = await this.aggregate([
+        {
+            $match: { tour: tourId }
+        },
+        {
+            $group: {
+                _id: '$tour',
+                nRating: { $sum: 1 },
+                avgRatings: { $avg: '$rating' }
+            }
+        }
+    ])
+
+    // console.log(stats)
+    if (stats.length > 0) {
+        await Tour.findByIdAndUpdate(tourId, {
+            ratingsQuantity: stats[0].nRating,
+            ratingsAverage: stats[0].avgRatings
+        })
+    } else {
+        await Tour.findByIdAndUpdate(tourId, {
+            ratingsQuantity: 0,
+            ratingsAverage: 4.5
+        })
+    }
+
+}
+
+// Why we use post
+// Because after the document is already saved to the database
+// It makes sense to then calculate the average ratings
+ReviewSchema.post('save', function () {
+    // this point to the current review
+    this.constructor.calcAverageRatings(this.tour)
+    console.log('constructor:', this.constructor)
+})
+
+ReviewSchema.pre(/^findOneAnd/, async function (next) {
+    this.r = await this.findOne()
+    // console.log('review:',this.r)
+    next()
+})
+
+ReviewSchema.post(/^findOneAnd/, async function () {
+    await this.r.constructor.calcAverageRatings(this.r.tour)
 })
 
 

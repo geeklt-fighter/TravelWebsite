@@ -34,7 +34,8 @@ const tourSchema = new mongoose.Schema({
         type: Number,
         default: 4.5,
         max: [5, 'Rating must be below 5.0'],
-        min: [1, 'Rating must be above 1.0']
+        min: [1, 'Rating must be above 1.0'],
+        set: val => Math.round(val) // not 4.66666 but 4.7
     },
     ratingsQuantity: {
         type: Number,
@@ -105,7 +106,7 @@ const tourSchema = new mongoose.Schema({
     guides: [
         {
             type: mongoose.Schema.ObjectId,
-            ref: 'User'
+            ref: 'User' // established reference between different data sets in Mongoose
         }
     ]
 }, {
@@ -113,13 +114,16 @@ const tourSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 })
 
+tourSchema.index({ price: 1, ratingsAverage: -1 })
+tourSchema.index({ slug: 1 })
+tourSchema.index({startLocation: '2dsphere'})
 
 tourSchema.virtual('durationWeeks').get(function () {   // Technically not part of the database
     return this.duration / 7
 })
 
 // Virtual populate
-tourSchema.virtual('reviews',{
+tourSchema.virtual('reviews', {
     ref: 'Review',
     foreignField: 'tour',    // actually exists in reviewModel
     localField: '_id'
@@ -181,12 +185,12 @@ tourSchema.pre(/^find/, function (next) {
 })
 
 // Aggregation middleware
-tourSchema.pre('aggregate', function (next) {
-    // Note: this point to the current aggregation object
-    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } })
-    // console.log(this.pipeline())
-    next()
-})
+// tourSchema.pre('aggregate', function (next) {    // Note: This middleware still in front of the geoNear(which only valid as the first stage)
+//     // Note: this point to the current aggregation object
+//     this.pipeline().unshift({ $match: { secretTour: { $ne: true } } })
+//     console.log(this.pipeline())
+//     next()
+// })
 
 const Tour = mongoose.model('Tour', tourSchema)
 
