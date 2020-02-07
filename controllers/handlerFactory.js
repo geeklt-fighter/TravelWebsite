@@ -73,11 +73,12 @@ exports.getAll = Model =>
         if (req.params.tourId) filter = { tour: req.params.tourId }
 
         // Execute the query
-        const features = new APIFeatures(Model.find(filter), req.query)
+        const features = new APIFeatures(Model.find(filter), req.query)     // features is the APIFeatures having query and querystring
             .filter()
             .sort()
             .limitFields()
             .paginate()
+        
         // const doc = await features.query.explain()
         const doc = await features.query
 

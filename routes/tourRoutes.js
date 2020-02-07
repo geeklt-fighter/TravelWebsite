@@ -39,7 +39,7 @@ router
         protect,
         authController.restrictTo('admin', 'lead-guide', 'guide'),
         getMonthlyPlan)
-
+ 
 router
     .route('/tours-distance/:distance/center/:latlng/unit/:unit')
     .get(getToursWithin)
