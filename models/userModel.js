@@ -87,7 +87,7 @@ userSchema.methods.correctPassword = async function (candidatePassword, userPass
 userSchema.methods.changesPasswordAfter = function (JWTTimestamp) { // Note: There is no need a fucking async, becuase the protect cannot receive the return value
     if (this.passwordChangedAt) { // this keyword point to the current document
         const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10)
-        console.log(changedTimestamp, JWTTimestamp)
+        // console.log(changedTimestamp, JWTTimestamp)
         return changedTimestamp > JWTTimestamp
     }
 
@@ -99,7 +99,7 @@ userSchema.methods.createPasswordResetToken = function () {
 
     this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex')
     this.passwordResetExpires = Date.now() + 10 * 60 * 1000
-    console.log({ resetToken }, this.passwordResetToken)
+    // console.log({ resetToken }, this.passwordResetToken)
 
     return resetToken
 }

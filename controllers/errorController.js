@@ -24,35 +24,57 @@ const handleJWTExpiredError = err => new AppError('Your token has been expired! 
 
 /*********************************************************************************************************** */
 
-const sentErrorDev = (err, res) => {
-    res.status(err.statusCode).json({
-        status: err.status,
-        error: err,
-        message: err.message,
-        stack: err.stack
+const sentErrorDev = (err, req, res) => {
+    // For API
+    if (req.originalUrl.startsWith('/api')) {
+        return res.status(err.statusCode).json({
+            status: err.status,
+            error: err,
+            message: err.message,
+            stack: err.stack
+        })
+    }
+    // For Renderer website
+    // console.log('Error:', err)
+    return res.status(err.statusCode).render('error', {
+        title: 'Something went wrong !',
+        msg: err.message
     })
+
+
 }
 
-const sentErrorProd = (err, res) => {
-    // Operantional Error: send message to the client
-    if (err.isOperational) {
-        console.log(err)
-        res.status(err.statusCode).json({
-            status: err.status,
-            message: err.message
-        })
-
-        // Programming Error or unknown Error: don't leak error details
-    } else {
-        // 1) Log error
-        console.error('Error: ', err)
-
-        // 2) Send generic message
-        res.status(500).json({
+const sentErrorProd = (err, req, res) => {
+    // 1 For API
+    if (req.originalUrl.startsWith('/api')) {
+        // 1.a Operantional Error: send message to the client
+        if (err.isOperational) {
+            // console.log(err)
+            return res.status(err.statusCode).json({
+                status: err.status,
+                message: err.message
+            })
+        }
+        // 1.b Programming Error or unknown Error: don't leak error details
+        return res.status(500).json({
             status: 'error',
             message: 'Something went very wrong'
         })
     }
+    // 2 For Renderer website
+    if (err.isOperational) {
+        // 2.a Operantional, trusted error: send message to the client
+        // console.log('hello',err)
+        return res.status(err.statusCode).render('error', {
+            title: 'Something went wrong !',
+            msg: err.message
+        })
+    }
+    // 2.b Programming or other unknown error: do not leak error details
+    return res.status(err.statusCode).render('error', {
+        title: 'Something went wrong !',
+        msg: 'Please try again later'
+    })
 }
 
 /*********************************************************************************************************** */
@@ -62,9 +84,10 @@ module.exports = (err, req, res, next) => {
     err.status = err.status || 'error'
 
     if (process.env.NODE_ENV === 'development') {
-        sentErrorDev(err, res)
+        sentErrorDev(err, req, res)
     } else if (process.env.NODE_ENV === 'production') {
-        let error = { ...err }
+        let error = { ...err }  // This point is very tricky: because it does not copy the message
+        error.message = err.message
 
         // handle invalid database id, means: user find the id which is not existed in database
         if (error.name === 'CastError') error = handleCastErrorDB(error)
@@ -76,7 +99,7 @@ module.exports = (err, req, res, next) => {
         if (error.name === 'JsonWebTokenError') error = handleJWTError(error)
         if (error.name === 'TokenExpiredError') error = handleJWTExpiredError(error)
 
-        sentErrorProd(error, res)
+        sentErrorProd(error, req, res)
     }
 
 }

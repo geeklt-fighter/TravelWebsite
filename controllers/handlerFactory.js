@@ -8,7 +8,7 @@ exports.deleteOne = Model =>
         const doc = await Model.findByIdAndDelete(req.params.id)
 
         if (!doc) {
-            return next(new AppError('No tour found with that ID', 404)) // we use return because we don't want to move on the next one
+            return next(new AppError('No doc found with that ID', 404)) // we use return because we don't want to move on the next one
         }
 
         res.status(204).json({
@@ -42,7 +42,7 @@ exports.createOne = Model =>
         res.status(201).json({
             status: 'success',
             data: {
-                data: doc
+                data: doc 
             }
         })
     })
