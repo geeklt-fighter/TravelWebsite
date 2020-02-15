@@ -1,7 +1,7 @@
 const express = require('express')
 
 const router = express.Router()
-const { getAllUsers, createUser, getUser, updateUser, deleteUser, updateMe, deleteMe, getMe } = require('../controllers/userController')
+const { getAllUsers, createUser, getUser, updateUser, deleteUser, updateMe, deleteMe, getMe, uploadUserPhoto, resizeUserPhoto } = require('../controllers/userController')
 const { signup, login, forgotPassword, resetPassword, protect, updatePassword, restrictTo, logout } = require('../controllers/authController')
 
 
@@ -9,7 +9,7 @@ const { signup, login, forgotPassword, resetPassword, protect, updatePassword, r
 // Not actually the REST format
 router.post('/signup', signup)
 router.post('/login', login)
-router.get('/logout', logout) 
+router.get('/logout', logout)
 
 router.post('/forgotPassword', forgotPassword)
 router.patch('/resetPassword/:token', resetPassword)
@@ -20,7 +20,7 @@ router.use(protect)
 
 // so we remove protect middleware from the 21 
 router.patch('/updateMyPassword', updatePassword)
-router.patch('/updateMe', updateMe)
+router.patch('/updateMe', uploadUserPhoto, resizeUserPhoto, updateMe)
 router.patch('/deleteMe', deleteMe)
 router.get('/me', getMe, getUser)
 

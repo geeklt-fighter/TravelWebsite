@@ -1,7 +1,10 @@
 const express = require('express')
 
 const router = express.Router()
-const { getAllTours, createTour, getTour, updateTour, deleteTour, aliasTopTours, getTourStats, getMonthlyPlan, getToursWithin,getDistances }
+const { getAllTours, createTour, getTour,
+    updateTour, deleteTour, aliasTopTours,
+    getTourStats, getMonthlyPlan, getToursWithin,
+    getDistances, uploadTourImages, resizeTourImages }
     = require('../controllers/tourController')
 const { protect, restrictTo } = require('../controllers/authController')
 const authController = require('../controllers/authController')
@@ -39,7 +42,7 @@ router
         protect,
         authController.restrictTo('admin', 'lead-guide', 'guide'),
         getMonthlyPlan)
- 
+
 router
     .route('/tours-distance/:distance/center/:latlng/unit/:unit')
     .get(getToursWithin)
@@ -62,6 +65,8 @@ router
     .patch(
         protect,
         authController.restrictTo('admin', 'lead-guide'),
+        uploadTourImages,
+        resizeTourImages,
         updateTour)
     .delete(
         protect,
