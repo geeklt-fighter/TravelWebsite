@@ -14,15 +14,21 @@ router.get('/logout', logout)
 router.post('/forgotPassword', forgotPassword)
 router.patch('/resetPassword/:token', resetPassword)
 
-// This will basically protect all the routes come after this middleware
-// becuase middleware runs in sequence
+
+/**
+ * This will basically protect all the routes come after this middleware
+ * (Middleware runs in sequence)
+ */
 router.use(protect)
 
-// so we remove protect middleware from the 21 
-router.patch('/updateMyPassword', updatePassword)
-router.patch('/updateMe', uploadUserPhoto, resizeUserPhoto, updateMe)
-router.patch('/deleteMe', deleteMe)
 router.get('/me', getMe, getUser)
+router.patch('/deleteMe', deleteMe)
+router.patch('/updateMyPassword', updatePassword)
+router.patch('/updateMe',
+    // uploadUserPhoto,
+    // resizeUserPhoto,
+    updateMe)
+
 
 
 router.use(restrictTo('admin'))

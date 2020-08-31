@@ -1,6 +1,13 @@
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
-// Server should be starting file
+
+process.on('uncaughtException', err => {
+    console.log(err.name, err.message)
+    console.log('UNCAUGHT EXCETION! Shutting down ...')
+    process.exit(1)
+})
+
+
 const app = require('./app');
 
 dotenv.config({ path: './.env' })
@@ -15,8 +22,6 @@ mongoose.connect(DB, {
 }).then(con => {
     // console.log(con.connections)
     console.log('DB connection successful')
-}).catch(err => {
-    console.log(err)
 })
 
 
@@ -33,5 +38,4 @@ process.on('unhandleRejection', err => {
         process.exit(1)
     })
 })
-
 

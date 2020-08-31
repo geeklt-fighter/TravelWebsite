@@ -25,7 +25,7 @@ const multerFilter = (req, file, cb) => {
     } else {
         cb(new AppError('Not an image! Please upload only images', 400), false)
     }
-}
+} 
 
 const upload = multer({
     storage: multerStorage,
@@ -62,29 +62,20 @@ const filterObj = (obj, ...allowedFields) => {
 
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-    // console.log(req.file)
-    // console.log(req.body)
-    // 1) Create error if user POSTs password data
-    if (req.body.password || req.body.passwordConfirm) {
+    // Create error if user POSTs password data
+    if (req.body.password || req.body.passwordConfirm) 
         return next(new AppError('This route is not for the password update, please use /updateMyPassword', 400))
-    }
+    
 
-
-    // we don't want update everthing in the body
-    // 2) Filtered out unwanted fields names that are not allowed to be updated 
+    // Don't want update everthing in the body
+    // Filtered out unwanted fields names that are not allowed to be updated 
     const filteredBody = filterObj(req.body, 'name', 'email');
 
-    if (req.file) {
-        // console.log(filteredBody)
+    if (req.file)  // console.log(filteredBody)
         filteredBody.photo = req.file.filename
-    }
+    
     // 3) Update user documents
     const updateUser = await User.findByIdAndUpdate(req.user.id, filteredBody, { new: true, runValidators: true })
-
-
-    // user.name = 'Jonas'
-    // await user.save()   // Because the passwordConfirm is a required field, so the save function is not a correct option
-    // We actually can use findById and update
 
     res.status(200).json({
         status: 'success',
@@ -94,13 +85,13 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     })
 })
 
-exports.getMe = (req, res, next) => {
-    req.params.id = req.user.id
-    next()
-}
 
-// We actually do not delete that document from the database
-// We instead set the account inactive
+
+
+/**
+ * We actually do not delete that document from the database,
+ * instead set the account inactive
+ */
 exports.deleteMe = catchAsync(async (req, res, next) => {
     await User.findByIdAndUpdate(req.user.id, { active: false })
 
@@ -116,6 +107,12 @@ exports.createUser = (req, res) => {
         status: 'error',
         message: 'This route is not yet defined'
     })
+}
+
+// Middleware
+exports.getMe = (req, res, next) => {
+    req.params.id = req.user.id
+    next() 
 }
 
 exports.getUser = Factory.getOne(User)

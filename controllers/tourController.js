@@ -1,12 +1,10 @@
 const multer = require('multer')
 const sharp = require('sharp')
 const Tour = require('../models/tourModel')
-// const APIFeatures = require('../utils/apiFeatures')
 const catchAsync = require('../utils/catchAsync')
 const AppError = require('../utils/appError')
 const Factory = require('../controllers/handlerFactory')
-// const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
-
+const APIFeatures = require('../utils/apiFeatures')
 
 
 const multerStorage = multer.memoryStorage()
@@ -70,101 +68,15 @@ exports.aliasTopTours = (req, res, next) => {
     next()
 }
 
-
-
 exports.getAllTours = Factory.getAll(Tour)
-// exports.getAllTours = catchAsync(async (req, res, next) => {
-//     // Execute the query
-//     const features = new APIFeatures(Tour.find(), req.query)
-//         .filter()
-//         .sort()
-//         .limitFields()
-//         .paginate()
-//     const tours = await features.query
-
-//     // Send the response
-//     res.status(200).json({
-//         status: 'success',
-//         results: tours.length,
-//         data: {
-//             tours
-//         }
-//     })
-// })
 
 exports.getTour = Factory.getOne(Tour, { path: 'reviews' })
-// exports.getTour = catchAsync(async (req, res, next) => {
-//     const tour = await Tour.findById(req.params.id).populate('reviews')
-//         // move it to the query middleware
-//         // .populate({
-//         //     path: 'guides',
-//         //     select: '-__v'
-//         // })  // Populate meaning replace the guides id with actual data
-
-//     if (!tour) {
-//         return next(new AppError('No tour found with that ID', 404)) // we use return because we don't want to move on the next one
-//     }
-
-//     res.status(200).json({
-//         status: 'success',
-//         data: {
-//             tour
-//         }
-//     })
-// })
 
 exports.createTour = Factory.createOne(Tour)
-// exports.createTour = catchAsync(async (req, res, next) => {
-//     const newTour = await Tour.create(req.body)
-//     res.status(201).json({
-//         status: 'success',
-//         data: {
-//             tour: newTour
-//         }
-//     })
-//     // try {
-//     //     // const newTour = new Tour()
-//     //     // newTour.save()
-
-
-//     // } catch (err) {
-//     //     res.status(400).json({
-//     //         status: 'fail',
-//     //         message: err
-//     //     })
-//     // }
-// })
 
 exports.updateTour = Factory.updateOne(Tour)
-// exports.updateTour = catchAsync(async (req, res, next) => {
-
-//     await Tour.findByIdAndUpdate(req.params.id, req.body, {
-//         new: true,
-//         runValidators: true // it will be the validator
-//     })
-//     res.status(200).json({
-//         status: 'success',
-//         data: {
-//             tour: 'Update something'
-//         }
-//     })
-// })
-
 
 exports.deleteTour = Factory.deleteOne(Tour)
-// exports.deleteTour = catchAsync(async (req, res, next) => {
-//     const tour = await Tour.findByIdAndDelete(req.params.id)
-
-//     if (!tour) {
-//         return next(new AppError('No tour found with that ID', 404)) // we use return because we don't want to move on the next one
-//     }
-
-//     res.status(204).json({
-//         status: 'success',
-//         data: null
-//     })
-// })
-
 
 // Aggregation pipeline
 exports.getTourStats = catchAsync(async (req, res, next) => {

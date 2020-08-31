@@ -23,11 +23,8 @@ const app = express();
 app.set('view engine', 'pug')
 app.set('views', path.join(__dirname, 'views'))
 /* Middleware is a function that can modify the incoming request data */
-// 1) Global Middlewares
 
-// Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
-
 // Security HTTP headers
 app.use(helmet())
 
@@ -68,33 +65,23 @@ app.use(hpp({
     ]
 }))
 
-// This is just test middleware
-app.use((req, res, next) => {
-    req.requestTime = new Date().toISOString()
-    console.log(req.cookies)
+app.use((req,res,next)=>{
     next()
 })
 
-// Routes
-
+// Routes 
 app.use('/', viewRouter)
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter)
 
-// Should be the last part
-// Handle the operational error
+
+/**
+ * Should be the last part 
+ * Handle all the url that are not handled before
+ * The operational error
+ */
 app.all('*', (req, res, next) => {
-    // res.status(404).json({
-    //     status: 'fail',
-    //     message: `Can't find ${req.originalUrl} on this server`
-    // })
-
-    // const err = new Error(`Can't find ${req.originalUrl} on this server`)
-    // err.status = 'fail'
-    // err.statusCode = 404
-    // next(err)   // go straight to line 44
-
     // Better code
     next(new AppError(`Can't find ${req.originalUrl} on this server`, 404))
 })

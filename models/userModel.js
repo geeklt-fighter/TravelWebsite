@@ -1,7 +1,7 @@
 const crypto = require('crypto')
 const mongoose = require('mongoose')
 const validator = require('validator')
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs') 
 
 // name, email, photo, password, passwordConfirm
 const userSchema = new mongoose.Schema({
@@ -88,13 +88,12 @@ userSchema.methods.correctPassword = async function (candidatePassword, userPass
 }
 
 userSchema.methods.changesPasswordAfter = function (JWTTimestamp) { // Note: There is no need a fucking async, becuase the protect cannot receive the return value
-    if (this.passwordChangedAt) { // this keyword point to the current document
+    if (this.passwordChangedAt) { 
         const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10)
-        // console.log(changedTimestamp, JWTTimestamp)
         return changedTimestamp > JWTTimestamp
     }
 
-    return false    // meaning user has not changed the password
+    return false    
 }
 
 userSchema.methods.createPasswordResetToken = function () {
@@ -102,8 +101,7 @@ userSchema.methods.createPasswordResetToken = function () {
 
     this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex')
     this.passwordResetExpires = Date.now() + 10 * 60 * 1000
-    // console.log({ resetToken }, this.passwordResetToken)
-
+  
     return resetToken
 }
 

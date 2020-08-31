@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const slugify = require('slugify')
-// const User = require('../models/userModel')
 
 const tourSchema = new mongoose.Schema({
     name: {
@@ -11,7 +10,6 @@ const tourSchema = new mongoose.Schema({
         trim: true,
         maxlength: [40, 'A tour name must have less or equal than 40 characters'],
         minlength: [10, 'A tour name must have more or equal than 10 characters'],
-        // validate: [validator.isAlpha, 'Tour name must only contain character']
     },
     slug: String,
     duration: {
@@ -35,7 +33,7 @@ const tourSchema = new mongoose.Schema({
         default: 4.5,
         max: [5, 'Rating must be below 5.0'],
         min: [1, 'Rating must be above 1.0'],
-        set: val => Math.round(val) // not 4.66666 but 4.7
+        set: val => Math.round(val * 10) / 10
     },
     ratingsQuantity: {
         type: Number,
@@ -79,30 +77,30 @@ const tourSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    startLocation: {
-        // GeoJSON
-        type: {
-            type: String,
-            default: 'Point',
-            enum: ['Point']
-        },
-        coordinates: [Number],
-        address: String,
-        description: String
-    },
-    locations: [
-        {
-            type: {
-                type: String,
-                default: 'Point',
-                enum: ['Point']
-            },
-            coordinates: [Number],
-            address: String,
-            description: String,
-            day: Number
-        }
-    ],
+    // startLocation: {
+    //     // GeoJSON
+    //     type: {
+    //         type: String,
+    //         default: 'Point',
+    //         enum: ['Point']
+    //     },
+    //     coordinates: [Number],
+    //     address: String,
+    //     description: String
+    // },
+    // locations: [
+    //     {
+    //         type: {
+    //             type: String,
+    //             default: 'Point',
+    //             enum: ['Point']
+    //         },
+    //         coordinates: [Number],
+    //         address: String,
+    //         description: String,
+    //         day: Number
+    //     }
+    // ],
     guides: [
         {
             type: mongoose.Schema.ObjectId,
@@ -116,9 +114,9 @@ const tourSchema = new mongoose.Schema({
 
 tourSchema.index({ price: 1, ratingsAverage: -1 })
 tourSchema.index({ slug: 1 })
-tourSchema.index({startLocation: '2dsphere'})
+tourSchema.index({ startLocation: '2dsphere' })
 
-tourSchema.virtual('durationWeeks').get(function () {   // Technically not part of the database
+tourSchema.virtual('durationWeeks').get(function () {
     return this.duration / 7
 })
 
@@ -129,42 +127,20 @@ tourSchema.virtual('reviews', {
     localField: '_id'
 })
 
-/** There are 4 middlewares in mongoose */
 
 // Document middleware: runs before .save() and .create() 
 tourSchema.pre('save', function (next) {
-    // Note: this point to the current document
     this.slug = slugify(this.name, { lower: true })
     next()
 })
 
-// guide embedding
-// tourSchema.pre('save',async function (next) {
-//     const guidesPromises = this.guides.map(async id => await User.findById(id))
-//     this.guides = await Promise.all(guidesPromises)
-//     next()
-// })
 
-// tourSchema.post('save', function (doc, next) {
-//     console.log(doc)
-//     next()
-// })
+tourSchema.post('save', function (doc, next) {
+    next()
+})
 
-// Query middleware
-/** We need to define the access control, not only find all but also find one */
-// tourSchema.pre('find', function (next) {
-//     this.find({ secretTour: { $ne: true } })
-//     next()
-// })
-
-// tourSchema.pre('findOne', function (next) {
-//     this.find({ secretTour: { $ne: true } })
-//     next()
-// })
-
-// better code, is using regular expression, /^find/ means that find, findOne, findOneAndDelete and so on.
+// Query middleware: /^find/ means that find, findOne, findOneAndDelete and so on.
 tourSchema.pre(/^find/, function (next) {
-    // Note: this point to the current query
     this.find({ secretTour: { $ne: true } })
     this.start = Date.now()
     next()
@@ -172,25 +148,22 @@ tourSchema.pre(/^find/, function (next) {
 
 tourSchema.post(/^find/, function (docs, next) {
     console.log(`Query took ${Date.now() - this.start} milliseconds`)
-    // console.log(docs)
     next()
 })
 
 tourSchema.pre(/^find/, function (next) {
     this.populate({
         path: 'guides',
-        select: '-__v'
+        select: '-__v -passwordChangedAt'
     })  // Populate meaning replace the guides id with actual data
     next()
 })
 
 // Aggregation middleware
-// tourSchema.pre('aggregate', function (next) {    // Note: This middleware still in front of the geoNear(which only valid as the first stage)
-//     // Note: this point to the current aggregation object
-//     this.pipeline().unshift({ $match: { secretTour: { $ne: true } } })
-//     console.log(this.pipeline())
-//     next()
-// })
+tourSchema.pre('aggregate', function (next) {
+    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } })
+    next()
+})
 
 const Tour = mongoose.model('Tour', tourSchema)
 
