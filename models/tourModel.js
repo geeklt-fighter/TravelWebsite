@@ -77,30 +77,30 @@ const tourSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    // startLocation: {
-    //     // GeoJSON
-    //     type: {
-    //         type: String,
-    //         default: 'Point',
-    //         enum: ['Point']
-    //     },
-    //     coordinates: [Number],
-    //     address: String,
-    //     description: String
-    // },
-    // locations: [
-    //     {
-    //         type: {
-    //             type: String,
-    //             default: 'Point',
-    //             enum: ['Point']
-    //         },
-    //         coordinates: [Number],
-    //         address: String,
-    //         description: String,
-    //         day: Number
-    //     }
-    // ],
+    startLocation: {
+        // GeoJSON
+        type: {
+            type: String,
+            default: 'Point',
+            enum: ['Point']
+        },
+        coordinates: [Number],
+        address: String,
+        description: String
+    },
+    locations: [
+        {
+            type: {
+                type: String,
+                default: 'Point',
+                enum: ['Point']
+            },
+            coordinates: [Number],
+            address: String,
+            description: String,
+            day: Number
+        }
+    ],
     guides: [
         {
             type: mongoose.Schema.ObjectId,
@@ -159,11 +159,12 @@ tourSchema.pre(/^find/, function (next) {
     next()
 })
 
-// Aggregation middleware
-tourSchema.pre('aggregate', function (next) {
-    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } })
-    next()
-})
+// // Aggregation middleware
+// tourSchema.pre('aggregate', function (next) {
+//     this.pipeline().unshift({ $match: { secretTour: { $ne: true } } })
+//     console.log(this.pipeline())
+//     next()
+// })
 
 const Tour = mongoose.model('Tour', tourSchema)
 

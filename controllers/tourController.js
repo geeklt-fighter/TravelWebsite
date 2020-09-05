@@ -170,7 +170,7 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
     const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1
 
     if (!lat || !lng) {
-        next(new AppError('Please provide latitude and longitude in the format like lat,lon', 400))
+        next(new AppError('Please provide latitude and longitude in the format like lat,lng', 400))
     }
 
     const tours = await Tour.find({
@@ -188,7 +188,7 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
 })
 
 exports.getDistances = catchAsync(async (req, res, next) => {
-    const { distance, latlng, unit } = req.params
+    const { latlng, unit } = req.params
     const [lat, lng] = latlng.split(',')
     const multiplier = unit === 'mi' ? 0.000621371 : 0.001
 
@@ -198,7 +198,7 @@ exports.getDistances = catchAsync(async (req, res, next) => {
 
     const distances = await Tour.aggregate([
         {
-            $geoNear: { // Keep in mind, geoNear always been the first stage
+            $geoNear: {
                 near: {
                     type: 'Point',
                     coordinates: [lng * 1, lat * 1]  // *1 convert to number

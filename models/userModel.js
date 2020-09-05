@@ -72,7 +72,7 @@ userSchema.pre('save', function (next) {
     }
 
     this.passwordChangedAt = Date.now()
-    next()
+    next() 
 })
 
 // Query middleware
