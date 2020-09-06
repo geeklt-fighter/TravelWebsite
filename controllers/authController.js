@@ -12,19 +12,14 @@ const signToken = id => {
         , { expiresIn: process.env.JWT_EXPIRES_IN })
 }
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
     const token = signToken(user._id)
 
     const cookieOptions = {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
         // secure: true,   // using HTTPS, so we only use in production
-        httpOnly: true  // prevent XSS attack
-
-    }
-
-    // [notice this part]
-    if (process.env.NODE_ENV === 'production') {
-        cookieOptions.secure = true
+        httpOnly: true,  // prevent XSS attack
+        secure: req.secure || req.headers('x-forwarded-proto') === 'https'
     }
 
     res.cookie('jwt', token, cookieOptions)
@@ -55,7 +50,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     const newUser = await User.create(req.body)
     const url = `${req.protocol}://${req.get('host')}/me`
     await new Email(newUser, url).sendWelcome()
-    createSendToken(newUser, 201, res)
+    createSendToken(newUser, 201, req, res)
 })
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -69,7 +64,7 @@ exports.login = catchAsync(async (req, res, next) => {
     if (!user || !correct) {
         return next(new AppError('Incorrect email or password', 401))
     }
-    createSendToken(user, 200, res)
+    createSendToken(user, 200, req, res)
 })
 
 
@@ -197,7 +192,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
     // Update changedPasswordAt for the user: implement in the userModel
     // Log the user in, send JWT
-    createSendToken(user, 200, res)
+    createSendToken(user, 200, req, res)
 })
 
 
@@ -217,5 +212,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     // User.findByIdAndUpdate will not work as intended because the validator under passwordConfirm in userModel
 
     // 4) Log user in, send JWT
-    createSendToken(user, 200, res)
+    createSendToken(user, 200, req, res)
 })

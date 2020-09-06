@@ -23,6 +23,8 @@ const viewRouter = require('./routes/viewRoutes')
 
 const app = express();
 
+app.enable('trust proxy')
+
 app.set('view engine', 'pug')
 app.set('views', path.join(__dirname, 'views'))
 /* Middleware is a function that can modify the incoming request data */
