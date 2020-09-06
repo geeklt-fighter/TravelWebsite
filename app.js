@@ -9,6 +9,7 @@ const hpp = require('hpp')
 const path = require('path')
 const cookieParser = require('cookie-parser')
 const compression = require('compression')
+const cors = require('cors')
 
 dotenv.config({ path: './.env' });
 
@@ -29,7 +30,12 @@ app.set('view engine', 'pug')
 app.set('views', path.join(__dirname, 'views'))
 /* Middleware is a function that can modify the incoming request data */
 
+// Implement cors
+app.use(cors())
+
+// Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
+
 // Security HTTP headers
 app.use(helmet())
 
