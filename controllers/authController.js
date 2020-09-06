@@ -22,9 +22,11 @@ const createSendToken = (user, statusCode, res) => {
 
     }
 
+    // [notice this part]
     if (process.env.NODE_ENV === 'production') {
         cookieOptions.secure = true
     }
+
     res.cookie('jwt', token, cookieOptions)
 
     // Remove the password from the output
@@ -51,11 +53,8 @@ exports.logout = (req, res) => {
 
 exports.signup = catchAsync(async (req, res, next) => {
     const newUser = await User.create(req.body)
-    const url  = `${req.protocol}://${req.get('host')}/me`
-    await new Email(newUser,url).sendWelcome()
-    console.log(
-            'hello bitch'
-    )
+    const url = `${req.protocol}://${req.get('host')}/me`
+    await new Email(newUser, url).sendWelcome()
     createSendToken(newUser, 201, res)
 })
 
@@ -150,9 +149,9 @@ exports.restrictTo = (...roles) => {
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email })
-    if (!user) 
+    if (!user)
         return next(new AppError('There is no user with email address.', 404))
-    
+
     // generate the random reset token
     const resetToken = user.createPasswordResetToken()
     await user.save({ validateBeforeSave: false })
@@ -163,7 +162,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
         If you don't forget your password, please ignore this email;`
 
     try {
-        await new Email(user,resetURL).sendPasswordReset()
+        await new Email(user, resetURL).sendPasswordReset()
 
         res.status(200).json({
             status: 'success',

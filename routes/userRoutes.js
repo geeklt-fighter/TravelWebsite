@@ -12,7 +12,7 @@ const { signup, login, forgotPassword,
 
 // Not actually the REST format
 router.post('/signup', signup)
-router.post('/login', login)
+router.post('/login', login) 
 router.get('/logout', logout)
 
 router.post('/forgotPassword', forgotPassword)
