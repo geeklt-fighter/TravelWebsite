@@ -31,8 +31,8 @@ app.set('views', path.join(__dirname, 'views'))
 /* Middleware is a function that can modify the incoming request data */
 
 // Implement cors
-// app.use(cors())
-// app.options('*',cors())
+app.use(cors())
+app.options('*',cors())
 
 
 // Serving static files
