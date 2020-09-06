@@ -16,7 +16,6 @@ mongoose.connect(DB, {
     useFindAndModify: false,
     useUnifiedTopology: true
 }).then(con => {
-    // console.log(con.connections)
     console.log('DB connection successful')
 })
 
@@ -32,10 +31,9 @@ const importData = async () => {
         await Tour.create(tours)    // Note: please use the object rather than string
         await User.create(users, { validateBeforeSave: false }) // Becuase the passwordConfirm is required
         await Review.create(reviews)
-        console.log('Data successfully loaded !')
         process.exit()
     } catch (err) {
-        console.log(err)
+        // console.log(err)
     }
 }
 
@@ -46,7 +44,6 @@ const deleteData = async () => {
         await Tour.deleteMany()
         await User.deleteMany()
         await Review.deleteMany()
-        console.log('Data successfully deleted !')
         process.exit()
     } catch (err) {
         console.log(err)
@@ -59,4 +56,3 @@ if (process.argv[2] === '--import') {
 } else if (process.argv[2] === '--delete') {
     deleteData()
 }
-// console.log(process.argv)
