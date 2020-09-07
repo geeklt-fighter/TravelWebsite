@@ -13,9 +13,9 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     // Get the currently booked tour
     const tour = await Tour.findById(req.params.tourId)
     // Create the checkout session
+    // success_url: `${req.protocol}://${req.get('host')}/my-tours/?tour=${req.params.tourId}&user=${req.user.id}&price=${tour.price}`,
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
-        // success_url: `${req.protocol}://${req.get('host')}/my-tours/?tour=${req.params.tourId}&user=${req.user.id}&price=${tour.price}`,
         success_url: `${req.protocol}://${req.get('host')}/my-tours`,
         cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
         customer_email: req.user.email,
@@ -31,7 +31,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
             }
         ]
     })
-    console.log("hello session: ",session)
+    console.log("hello session: ", session)
     // Create session as response
     res.status(200).json({
         status: 'success',

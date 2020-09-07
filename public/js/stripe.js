@@ -12,7 +12,7 @@ export const bookTour = async tourId => {
         console.log(session)
         // Create checkout form + charge credit card
         await stripe.redirectToCheckout({
-            sessionId: session.data.session.id 
+            sessionId: session.session.id 
         })
     } catch (err) {
         showAlert('error',err)
