@@ -56,6 +56,12 @@ exports.getLoginForm = (req, res) => {
     })
 }
 
+exports.getSignupForm = (req,res)=>{
+    res.status(200).render('signup',{
+        title: 'Welcom to tl travel'
+    })
+}
+
 
 exports.getAccount = (req, res) => {
     res.status(200).render('account', {

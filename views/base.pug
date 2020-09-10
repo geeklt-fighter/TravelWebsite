@@ -6,15 +6,18 @@ html
             meta(charset="UTF-8")
             meta(name="viewport" content="width=device-width, initial-scale=1.0")
             title TL-travel | #{title}
-            link(rel="stylesheet" href="/css/style.css")    
+            link(rel="stylesheet" href="/css/style.css")
+            link(rel="stylesheet" href="/css/navbar.css") 
+            link(rel="stylesheet", href="/css/button.css")   
             link(rel="shortcut icon" type="image/png" href="/img/favicon.png")
             link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300i,700")
-            link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css", integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN", crossorigin="anonymous")
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
             script(src="https://js.stripe.com/v3/")
 
     body
         //- Header
-        include _header
+        //- include _header
+        include _navbar
 
         //- Content
         block content

@@ -4,14 +4,34 @@ import { login, logout } from './login'
 import { displayMap } from './mapbox'
 import { updateSettings } from './updateSettings'
 import { bookTour } from './stripe'
+import { singup } from './signup'
 
 // DOM Elements
 const mapBox = document.getElementById('map')
 const loginForm = document.querySelector('.form--login')
-const logoutButton = document.querySelector('.nav__el--logout')
+const signupForm = document.querySelector('.form--signup')
+const logoutButton = document.querySelector('.nav-logout')
 const userDataForm = document.querySelector('.form-user-data')
 const userPasswordForm = document.querySelector('.form-user-password')
 const bookBtn = document.getElementById('book-tour')
+
+const menubar = document.querySelector('.fas')
+const menu = document.querySelector('.nav-menu')
+// UI Change
+menubar.addEventListener('click', () => {
+    if (menubar.classList.contains('fa-bars')) {
+        menubar.classList.remove('fa-bars')
+        menubar.classList.add('fa-times')
+        console.log("open menu")
+        menu.classList.add('active')
+    } else {
+        menubar.classList.remove('fa-times')
+        menubar.classList.add('fa-bars')
+        console.log("close menu")
+        menu.classList.remove('active')
+    }
+})
+
 
 // Delegation
 if (mapBox) {
@@ -26,6 +46,19 @@ if (loginForm) {
         const email = document.getElementById('email').value
         const password = document.getElementById('password').value
         login(email, password)
+    })
+}
+
+if (signupForm) {
+    signupForm.addEventListener('submit', e => {
+        e.preventDefault()
+        // Values
+        const email = document.getElementById('email').value
+        const name = document.getElementById('name').value
+        const password = document.getElementById('password').value
+        const passwordConfirm = document.getElementById('passwordConfirm').value
+
+        singup(email, name, password, passwordConfirm)
     })
 }
 

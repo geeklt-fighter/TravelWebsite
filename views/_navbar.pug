@@ -1,0 +1,30 @@
+include _button
+.navbar
+    .navbar-container.container
+        a.navbar-logo(href="/") TRVL
+            i.fab.fa-typo3 
+        .menu-icon
+            i.fas.fa-bars
+        ul.nav-menu 
+            li.nav-item
+                a.nav-links(href="/") Home
+            li.nav-item
+                a.nav-links(href="/") All Tours
+            if user
+                li.nav-item
+                    a.nav-links.nav-logout(href="/logout") Log out
+            else
+                li
+                    a.nav-links-mobile(href="/login") Log in
+
+        //- +Button('btn--outline','btn--medium','SIGNUP')
+        if user
+            
+            a.nav__el(href="/me")
+                img.nav__user-img(src=`/img/users/${user.photo}` alt=`Photo of ${user.name}`)
+                span= user.name.split(' ')[0]
+            
+            //- +Button('sbtn--outline','sbtn--medium','Log out','/logout')
+        else
+            +Button('sbtn--outline','sbtn--medium','Log in','/login')
+

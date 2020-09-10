@@ -2,15 +2,20 @@ extends base
 
 block content
     main.main
-        .login-form
+        .signup-form
             h2.heading-secondary.ma-bt-lg #{title}
-            form.form.form--login
+            form.form.form--signup
                 .form__group
                     label.form__label(for='email') Email address
                     input#email.form__input(type='email' placeholder='you@example.com', required)
+                .form__group
+                    label.form__label(for='name') name
+                    input#name.form__input(type='text' placeholder='test', required)
                 .form__group.ma-bt-md
                     label.form__label(for='password') Password
                     input#password.form__input(type='password' placeholder='••••••••', required, minlength='8')
                 .form__group
-                    button.btn.btn--green Login
-                    a.btn-right(href="/signup") If you don't have account please sign up
+                    label.form__label(for='passwordConfirm') Password confirm
+                    input#passwordConfirm.form__input(type='password' placeholder='••••••••', required)
+                .form__group
+                    button.btn.btn--green Sign up
