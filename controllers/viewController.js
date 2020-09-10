@@ -2,7 +2,7 @@ const Tour = require('../models/tourModel')
 const User = require('../models/userModel')
 const catchAsync = require('../utils/catchAsync')
 const AppError = require('../utils/appError')
-const Booking = require('../models/bookingModel') 
+const Booking = require('../models/bookingModel')
 
 exports.getOverview = catchAsync(async (req, res) => {
     // 1) get tour data from collection
@@ -14,6 +14,12 @@ exports.getOverview = catchAsync(async (req, res) => {
     res.status(200).render('overview', {
         title: 'All Tours',
         tours
+    })
+})
+
+exports.getHome = catchAsync(async (req, res) => {
+    res.status(200).render('heroSection', {
+        title: 'Home'
     })
 })
 
@@ -56,8 +62,8 @@ exports.getLoginForm = (req, res) => {
     })
 }
 
-exports.getSignupForm = (req,res)=>{
-    res.status(200).render('signup',{
+exports.getSignupForm = (req, res) => {
+    res.status(200).render('signup', {
         title: 'Welcom to tl travel'
     })
 }

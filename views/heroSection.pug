@@ -1,0 +1,12 @@
+extends base
+include _button
+
+block content
+    .hero-container
+        video(src="/videos/video-1.mp4" autoPlay loop muted)
+        h1 Adventure awaits
+        p What are you waiting for?
+        .hero-btns
+            +Button('sbtn--outlint','sbtn--large','GET STARTED','/overview')
+            //- +Button('sbtn--primary','sbtn--large','WATCH TRAILER')
+   
