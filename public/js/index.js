@@ -5,6 +5,7 @@ import { displayMap } from './mapbox'
 import { updateSettings } from './updateSettings'
 import { bookTour } from './stripe'
 import { singup } from './signup'
+import { getTop5Cheap } from './top5tours'
 
 // DOM Elements
 const mapBox = document.getElementById('map')
@@ -14,6 +15,7 @@ const logoutButton = document.querySelector('.nav-logout')
 const userDataForm = document.querySelector('.form-user-data')
 const userPasswordForm = document.querySelector('.form-user-password')
 const bookBtn = document.getElementById('book-tour')
+const cards = document.querySelector('.cards')
 
 const menubar = document.querySelector('.fas')
 const menu = document.querySelector('.nav-menu')
@@ -34,6 +36,13 @@ menubar.addEventListener('click', () => {
 
 
 // Delegation
+// if (cards) {
+//     console.log("Start importing data")
+//     getTop5Cheap().then(data=>{
+//         console.log(data)
+//     })
+// }
+
 if (mapBox) {
     const locations = JSON.parse(mapBox.dataset.locations)
     displayMap(locations)

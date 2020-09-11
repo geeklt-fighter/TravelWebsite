@@ -1,8 +1,11 @@
+const axios = require('axios')
+
 const Tour = require('../models/tourModel')
 const User = require('../models/userModel')
 const catchAsync = require('../utils/catchAsync')
 const AppError = require('../utils/appError')
 const Booking = require('../models/bookingModel')
+
 
 exports.getOverview = catchAsync(async (req, res) => {
     // 1) get tour data from collection
@@ -18,6 +21,10 @@ exports.getOverview = catchAsync(async (req, res) => {
 })
 
 exports.getHome = catchAsync(async (req, res) => {
+    // axios.get('/api/v1/tours/top-5-cheap').then(data=>{
+    //     console.log(data)
+    // })
+
     res.status(200).render('heroSection', {
         title: 'Home'
     })
