@@ -3,10 +3,52 @@ include _button
 
 block content
     .hero-container
-        video(src="/videos/video-1.mp4" autoPlay loop muted)
+        //- video(src="/videos/video-1.mp4" autoPlay loop muted)
         h1 Adventure awaits
         p What are you waiting for?
         .hero-btns
             +Button('sbtn--outlint','sbtn--large','GET STARTED','/overview')
             //- +Button('sbtn--primary','sbtn--large','WATCH TRAILER')
-   
+    .cards
+        h1 Check out these EPIC Destinations!
+        .cards__container
+            .cards__wrapper
+                ul.cards__items
+
+                    li.cards__item
+                        a.cards__item__link(href="/")
+                            figure.cards__item__pic-wrap("data-category"="adventure")
+                                img.cards__item__img(src="/img/resource/img-1.jpg" alt="Travel Image")
+                            .cards__item__info
+                                h5.cards__item__text yo man check it out
+
+                    li.cards__item
+                        a.cards__item__link(href="/")
+                            figure.cards__item__pic-wrap("data-category"="adventure")
+                                img.cards__item__img(src="/img/resource/img-2.jpg" alt="Travel Image")
+                            .cards__item__info
+                                h5.cards__item__text yo man check it out
+                ul.cards__items
+
+                    li.cards__item
+                        a.cards__item__link(href="/")
+                            figure.cards__item__pic-wrap("data-category"="adventure")
+                                img.cards__item__img(src="/img/resource/img-3.jpg" alt="Travel Image")
+                            .cards__item__info
+                                h5.cards__item__text yo man check it out
+
+                    li.cards__item
+                        a.cards__item__link(href="/")
+                            figure.cards__item__pic-wrap("data-category"="adventure")
+                                img.cards__item__img(src="/img/resource/img-4.jpg" alt="Travel Image")
+                            .cards__item__info
+                                h5.cards__item__text yo man check it out
+
+                    li.cards__item
+                        a.cards__item__link(href="/")
+                            figure.cards__item__pic-wrap("data-category"="adventure")
+                                img.cards__item__img(src="/img/resource/img-5.jpg" alt="Travel Image")
+                            .cards__item__info
+                                h5.cards__item__text yo man check it out
+
+
